@@ -1,0 +1,19 @@
+# Sample data
+cat_a = [1, 2, 3, 4, 5]
+cat_b = [10, 20, 30]
+
+# TODO: Implement calculate_stats(data) to return a dict with mean and max.
+# Hint: mean = sum(data) / len(data)
+def calculate_stats(data):
+   a = sum(data)/len(data)
+   b = max(data)
+   print("max is ",b)
+   print("mean is ", a)
+
+# TODO: Use calculate_stats for both categories.
+stats_a = calculate_stats(cat_a)
+stats_b = calculate_stats(cat_b)
+
+# TODO: Print results in a clean format.
+print("A:", stats_a)
+print("B:", stats_b)
