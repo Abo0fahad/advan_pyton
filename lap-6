@@ -1,0 +1,49 @@
+import numpy as np
+import pandas as pd
+
+# 1) Load dataset
+raw = {
+    "age": [25, "N/A", 40, 33, "?"],
+    "income": [50000, 60000, None, "unknown", 80000],
+    "churned": [0, 1, 0, 1, 0],
+}
+df_raw = pd.DataFrame(raw)
+
+# 2) Normalize missing tokens
+missing_tokens = ["N/A", "NA", "not reported", "unknown", "?"]
+df = df_raw.replace(missing_tokens, np.nan)
+
+# 3) Missingness summary
+def missing_summary(df):
+    return {
+        "per_column_missing_pct": df.isna().mean() * 100,
+        "per_row_missing_count": df.isna().sum(axis=1)
+    }
+
+summary = missing_summary(df)
+
+# 4) Version A: drop rows with missing in key columns
+key_cols = ["age", "income"]
+df_A = df.dropna(subset=key_cols)
+
+# 5) Version B: impute + indicators
+df_B = df.copy()
+df_B["age"] = pd.to_numeric(df_B["age"])
+df_B["income"] = pd.to_numeric(df_B["income"])
+
+df_B["age_missing"] = df_B["age"].isna().astype(int)
+df_B["income_missing"] = df_B["income"].isna().astype(int)
+
+df_B["age"] = df_B["age"].fillna(df_B["age"].median())
+df_B["income"] = df_B["income"].fillna(df_B["income"].median())
+
+# 6) Compare statistics
+print("=== Missingness Summary ===")
+print(summary["per_column_missing_pct"])
+print(summary["per_row_missing_count"])
+
+print("\n=== Version A Stats ===")
+print(df_A.describe())
+
+print("\n=== Version B Stats ===")
+print(df_B.describe())
